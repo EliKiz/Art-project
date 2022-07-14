@@ -10,7 +10,7 @@ const drop = () => {
     // dragstart *
     // drop  - объект отправлен в dropArea
 
-    const fileInputs = document.querySelectorAll('[name = "upload" ]');
+    const fileInputs = document.querySelectorAll('[name = "upload"]');
 
     ['dragenter', 'dragleave', 'dragover', 'drop'].forEach(eventName => { 
         fileInputs.forEach(input => { 
@@ -25,8 +25,8 @@ const drop = () => {
     }
 
     function highlight(item) { 
-        item.closest('.file_upload').style.border = '5px solid yellow';
-        item.closest('.file_upload').style.backgroundColor = 'rgba(0,0,0, .7)';
+        item.closest('.file_upload').style.border = '2px solid #c51abb';
+        // item.closest('.file_upload').style.backgroundColor = 'rgba(0,0,0, .4)';
     }
 
     function unHighlight(item) { 
@@ -57,22 +57,30 @@ const drop = () => {
 
     fileInputs.forEach(input => { 
         input.addEventListener('drop', (e) => {
+            // Дропнутый файл помещаем в инпут
             input.files = e.dataTransfer.files;
             console.log(input.files);
 
-            console.log(input);
-            if(input.closest('.main_file')) { 
-                console.log('done');
-            }
-            let formData = new FormData();
-            for( let key in input.files) { 
-                formData.append(key, input.files[key]);
-            }
-            // formData.append('file', input.files[0]);
+            const formData = new FormData();
 
-            postData('assets/server.php', formData)
-                .then(res => console.log(res))
-                .catch(()=> console.log('ошибка'));
+            if(input.closest('.main_file')) { 
+                // console.log('done');
+               
+                formData.append('file', input.files[0]);
+                postData('assets/server.php', formData)
+                    .then(res => console.log(res))
+                    .catch(()=> console.log('ошибка'));
+
+                document.querySelector('.main_file_btn').textContent = 'Файл отправлен';
+            }
+
+            // for( let key in input.files) { 
+            //     formData.append(key, input.files[key]);
+            // }
+            // console.log(formData);
+            // postData('assets/server.php', formData)
+            //     .then(res => console.log(res))
+            //     .catch(()=> console.log('ошибка'));
 
             let dots;
             //   'awdasfag.jpg' =>  ['awdasfag', 'jpg']

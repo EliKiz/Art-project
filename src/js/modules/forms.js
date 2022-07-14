@@ -44,17 +44,27 @@ const forms = (state) => {
     
     upload.forEach(item => { 
         item.addEventListener('input', () => {
-            console.log(item.files[0]);
-            let dots;
-            //   'awdasfag.jpg' =>  ['awdasfag', 'jpg']
-            let arr = item.files[0].name.split('.');
-            arr.lenght > 5 ? '...' : dots = '.';
-            const name = arr[0].substring(0, 6) + dots + arr[1];
-            // установка названия файла
-            item.previousElementSibling.textContent = name;
+            console.log(item.files);
+           
+            // if(item.files.length > 1) { 
+            //     setFileName(item);
+            // }
+            setFileName(item);
+            
 
         });
     });
+
+    function setFileName(input, filesName) { 
+        let dots;
+        //   'awdasfag.jpg' =>  ['awdasfag', 'jpg']
+        const arr = input.files[0].name.split('.');
+        arr[0].length > 5 ? dots = '...' : dots = '.';
+        const name = arr[0].substring(0, 6) + dots + arr[1];
+        // установка названия файла
+        input.files.length > 1 ? input.previousElementSibling.textContent = name + ` и еще ${input.files.length-1} файл(-ов)` :
+        input.previousElementSibling.textContent = name;
+    }
 
     function closeModalDone(selector, time) { 
         setTimeout(()=> { 
@@ -62,6 +72,26 @@ const forms = (state) => {
             document.body.style.overflow = '';
         }, time);
     }
+
+    
+    const formData = new FormData();
+
+    upload.forEach(input => { 
+        input.addEventListener('drop', (e) => { 
+            input.files = e.dataTransfer.files;
+
+            for( let key in input.files) { 
+                console.log('key is ', key );
+                console.log('input.files is', input.files[key]);
+                formData.append(key, input.files[key]);
+            }
+            console.log('done append');
+            
+            // postData('assets/server.php', formData)
+            //     .then(res => console.log(res))
+            //     .catch(()=> console.log('ошибка'));
+        });
+    });
 
     form.forEach(item => { 
         item.addEventListener('submit', (e) => {
@@ -93,7 +123,8 @@ const forms = (state) => {
 
             // сбор данных
 
-            const formData = new FormData(item);
+            // const formData = new FormData(item);
+            formData.append('form', item);
             // Добавление данных в FormData append(знач. ключ) 
             if(item.getAttribute('data-calc') === 'calc') { 
                 for(let key in state) { 
